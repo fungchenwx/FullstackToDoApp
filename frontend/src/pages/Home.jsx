@@ -88,7 +88,7 @@ function Home() {
                         Logout
                     </button>
                 </div>
-                < TaskCount tasks={tasks} />
+                <TaskCount tasks={tasks} />
             </div>
             <div className="task-container">
                 <div className="tasks-section">

@@ -22,15 +22,15 @@ function Login() {
                 <h2>Why Task Managements?</h2>
                 <div className="features-grid">
                 <div className="feature-card">
-                    <h3>✅ Simple Interface</h3>
+                    <h3>Simple Interface</h3>
                     <p>Easily add, edit, and track your daily tasks.</p>
                 </div>
                 <div className="feature-card">
-                    <h3>🔒 Secure Authentication</h3>
+                    <h3>Secure Authentication</h3>
                     <p>Protect your account with secure JWT-based login.</p>
                 </div>
                 <div className="feature-card">
-                    <h3>⚡ Staying Organized</h3>
+                    <h3>Staying Organized</h3>
                     <p>Write down tasks, ideas, and stay organized!</p>
                 </div>
                 </div>
