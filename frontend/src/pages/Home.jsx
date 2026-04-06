@@ -5,47 +5,52 @@ import TaskCount from "../components/TaskCount"
 import api from "../api"
 import "../styles/Home.css"
 import "../styles/Task.css"
-import "../styles/Form.css"
 import { useNavigate } from "react-router-dom"
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"
 import NavBar from "../components/NavBar"
 
 
-function Home() {
+function Home({ user, setUser }) {
     const [tasks, setTasks] = useState([]);
+    const [error, setError] = useState("");
     const navigate = useNavigate()
 
-    const handleLogout = () => {
-        localStorage.removeItem(ACCESS_TOKEN)
-        localStorage.removeItem(REFRESH_TOKEN)
-        navigate("/register")
-    }
+    const handleLogout = async () => {
+        try {
+            await api.post("/api/auth/logout/");
+            setUser(null);
+            navigate("/login");
+        } catch (err) {
+            console.error("Logout failed:", err);
+            setError("Failed to log out.");
+        }
+    };
 
     const getTasks = async () => {
         try {
             const res = await api.get("/api/tasks/");
-            const data = res.data;
-            setTasks(data);
-            console.log(data);
+            setTasks(res.data);
+            setError("");
         } catch (err) {
-            alert(err);
+            console.error("Failed to fetch tasks:", err);
+            setError("Failed to load tasks.");
         }
     };
 
-    useEffect(() => { getTasks(); }, []);
+    useEffect(() => { 
+        getTasks(); 
+    }, []);
 
     const deleteTask = async (id) => {
         try {
             const res = await api.delete(`/api/tasks/delete/${id}/`);
             if (res.status === 204) {
-                alert("Task deleted!");
+                await getTasks();
             } else {
-                alert("Failed to delete task");
+                setError("Failed to delete task.");
             }
-        } catch (error) {
-            alert(error);
-        } finally {
-            getTasks();
+        } catch (err) {
+            console.error("Failed to delete task:", err);
+            setError("Failed to delete task.");
         }
     };
 
@@ -56,11 +61,12 @@ function Home() {
                 await getTasks();
                 return true;
             } else {
-                alert("Failed to create task");
+                setError("Failed to create task.");
                 return false;
             }
         } catch (err) {
-            alert(err);
+            console.error("Failed to create task:", err);
+            setError("Failed to create task.");
             return false;
         }
     };
@@ -71,22 +77,22 @@ function Home() {
             if (res.status === 200) {
                 await getTasks();
             } else {
-                alert("Failed to update status");
+                setError("Failed to update status.");
             }
         } catch (err) {
             console.error("Error updating status:", err);
-            alert(err);
+            setError("Failed to update status.");
         }
     };
 
     return (
         <div className="home-container">
-            <NavBar/>
+            <NavBar user={user} onLogout={handleLogout} />
+
             <div className="home-header">
                 <div className="home-header-top">
-                    <button className="logout-button" onClick={handleLogout}>
-                        Logout
-                    </button>
+                    <h1>My Tasks</h1>
+                    {error && <p className="error-message">{error}</p>}
                 </div>
                 <TaskCount tasks={tasks} />
             </div>
